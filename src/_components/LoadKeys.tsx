@@ -77,7 +77,7 @@ export default function LoadKeys({
       console.log("empezando", type);
       let response = await fetch(baseUrl + fileName, {
         headers: {
-          // Authorization: "token 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"
+          // Authorization: "token "
         },
         cache: "no-store",
       });
