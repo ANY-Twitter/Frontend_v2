@@ -10,15 +10,26 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
-import { signUpSchema } from "@/lib/schemas";
+import { UserKeys, signUpSchema } from "@/lib/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Loader from "@/_components/Loader";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { genKey, hexToBytes, simetricCipher, toHexString } from "@/lib/crypto";
+import {
+  genKey,
+  genKeyPass,
+  hexToBytes,
+  simetricCipher,
+  toHexString,
+} from "@/lib/crypto";
+import { apiInstance } from "@/lib/api-calls";
+import { signIn } from "@/auth";
+import { signInAction } from "@/lib/auth-utils";
+import { useRouter } from "next/navigation";
 
 export default function SignUp() {
+  const router = useRouter();
   const signUpForm = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -31,7 +42,123 @@ export default function SignUp() {
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof signUpSchema>) => {};
+  const [keys, setKeys] = React.useState<UserKeys | null>(null);
+
+  async function verifyGithubKeys(
+    handle: string,
+    publicKeys: string,
+    privateKeys: string
+  ) {
+    const baseUrl = `https://api.github.com/repos/${handle}/anytwitter/contents/`;
+    const files = [
+      ["public.json", publicKeys, "publicKeys"],
+      ["private.json", privateKeys, "privateKeys"],
+    ];
+
+    let isOk = true;
+
+    for (const [file, expectedValue, formPath] of files) {
+      let response = await fetch(baseUrl + file, {
+        headers: {
+          //este codigo ya no es valido (se revoco).
+        },
+        cache: "no-store",
+      });
+
+      if (response.status === 404 || response.status === 400) {
+        signUpForm.setError(formPath as "privateKeys" | "publicKeys", {
+          message: "No existe el archivo en el repositorio de github",
+        });
+        isOk = false;
+        continue;
+      }
+
+      try {
+        const temp = await response.json();
+        const data_raw = atob(temp.content);
+        const response_json = JSON.parse(data_raw);
+        const response_string = JSON.stringify(response_json);
+
+        if (response_string !== expectedValue)
+          throw new Error("No es el valor requerido");
+      } catch (error) {
+        signUpForm.setError(formPath as "privateKeys" | "publicKeys", {
+          message: "No es el valor requerido",
+        });
+        isOk = false;
+      }
+    }
+    return isOk;
+  }
+
+  const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
+    if (keys === null) {
+      toast({
+        title: "Error al generar llaves",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const githubKeysSuccessFull = await verifyGithubKeys(
+      data.handle,
+      data.publicKeys,
+      data.privateKeys
+    );
+
+    if (!githubKeysSuccessFull) return;
+
+    const submitForm = new FormData();
+
+    submitForm.append("name", data.nombre);
+    submitForm.append("handle", data.handle);
+    submitForm.append("password", data.password);
+    submitForm.append(
+      "keys",
+      JSON.stringify({
+        cipher: keys.cipher.public,
+        sign: keys.sign.public,
+      })
+    );
+
+    try {
+      const response = await apiInstance.post("/crearUsuario", submitForm);
+
+      const salt = window.crypto.getRandomValues(new Uint8Array(16));
+      const iv = window.crypto.getRandomValues(new Uint8Array(12));
+      const localKey = await genKeyPass(data.password, salt);
+      const ct_keys_raw = await simetricCipher(
+        JSON.stringify(keys),
+        hexToBytes(localKey),
+        iv
+      );
+      const ct_key = toHexString(ct_keys_raw);
+
+      const user: { name: string; handle: string; srcProfilePicture: string } =
+        response.data;
+
+      localStorage.setItem(
+        user.handle,
+        JSON.stringify({
+          keys: ct_key,
+          iv: toHexString(iv),
+          salt: toHexString(salt),
+        })
+      );
+    } catch (e) {
+      console.log(e);
+      return;
+    }
+
+    try {
+      await signInAction({
+        username: data.handle,
+        password: data.password,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   const [isLoading, setIsLoading] = React.useState(true);
 
@@ -39,7 +166,8 @@ export default function SignUp() {
     const generateKeys = async () => {
       const initialKeys = await genKey(); //agregar llave simetríca github
 
-      // setUser({ ...user, keys: initialKeys });
+      setKeys(initialKeys);
+
       const public_keys_form_json = {
         cipher: initialKeys.cipher.public,
         sign: initialKeys.sign.public,
@@ -65,7 +193,7 @@ export default function SignUp() {
     };
 
     generateKeys();
-  }, [signUpForm, setIsLoading]);
+  }, [signUpForm, setIsLoading, setKeys]);
 
   if (isLoading) return <Loader width={48} height={48} />;
 
@@ -112,7 +240,12 @@ export default function SignUp() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Contraseña</FormLabel>
-                <Input {...field} type="password" placeholder="Contraseña" />
+                <Input
+                  {...field}
+                  type="password"
+                  placeholder="Contraseña"
+                  autoComplete="newpassword"
+                />
                 <FormMessage />
               </FormItem>
             )}
@@ -124,7 +257,12 @@ export default function SignUp() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Repita la contraseña</FormLabel>
-                <Input {...field} type="password" placeholder="Contraseña" />
+                <Input
+                  {...field}
+                  type="password"
+                  placeholder="Contraseña"
+                  autoComplete="newpassword"
+                />
                 <FormMessage />
               </FormItem>
             )}
@@ -150,7 +288,9 @@ export default function SignUp() {
             name="publicKeys"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Llave pública</FormLabel>
+                <FormLabel>
+                  Llave pública (nombre el archivo <strong>public.json</strong>)
+                </FormLabel>
                 <div className="flex">
                   <Input
                     {...field}
@@ -181,7 +321,10 @@ export default function SignUp() {
             name="privateKeys"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Llave privada</FormLabel>
+                <FormLabel>
+                  Llave privada (nombre el archivo <strong>private.json</strong>
+                  )
+                </FormLabel>
 
                 <div className="flex">
                   <Input

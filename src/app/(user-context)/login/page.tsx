@@ -18,7 +18,6 @@ import { signInAction } from "@/lib/auth-utils";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
 
 export default function LoginForm() {
   const router = useRouter();

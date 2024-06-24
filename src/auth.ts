@@ -22,7 +22,7 @@ export const {
         if (parsedCredentials.success) {
           const { username, password } = parsedCredentials.data;
 
-          const apiURL = process.env.API_URL ?? "http://localhost:3000";
+          const apiURL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
           const response = await axios.post(
             apiURL + "/login",
             {
