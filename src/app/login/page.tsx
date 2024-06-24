@@ -17,10 +17,13 @@ import { userLoginSchema } from "@/lib/schemas";
 import { signInAction } from "@/lib/auth-utils";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
 
 export default function LoginForm() {
   const router = useRouter();
   const form = useForm<z.infer<typeof userLoginSchema>>({
+    resolver: zodResolver(userLoginSchema),
     defaultValues: { username: "", password: "" },
   });
 
@@ -44,7 +47,7 @@ export default function LoginForm() {
   };
 
   return (
-    <div className=" grid justify-center content-center h-screen ">
+    <div className="grid justify-center content-center h-screen ">
       <h1 className="text-4xl font-bold tracking-tight text-center my-4">
         Bienvenido a ANY-TWITTER
       </h1>
@@ -62,9 +65,7 @@ export default function LoginForm() {
             name="username"
             render={({ field }) => (
               <FormItem>
-                <FormLabel htmlFor="username">
-                  Identificador de usuario
-                </FormLabel>
+                <FormLabel>Identificador de usuario</FormLabel>
                 <Input {...field} type="text" placeholder="Usuario" />
                 <FormMessage />
               </FormItem>
@@ -75,7 +76,7 @@ export default function LoginForm() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel htmlFor="password">Contraseña</FormLabel>
+                <FormLabel>Contraseña</FormLabel>
                 <Input {...field} type="password" autoComplete="on" />
                 <FormMessage />
               </FormItem>

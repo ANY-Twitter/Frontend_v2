@@ -1,3 +1,4 @@
+import type { UserKeys } from "./schemas";
 export const maxSize = () => 4096 / 8 - 2 * (256 / 8) - 2;
 
 export const toHexString = (bytes: Uint8Array) => {
@@ -46,7 +47,7 @@ export const genKeyPass = async (pass: string, salt: Uint8Array) => {
   return toHexString(new Uint8Array(key_exported_raw));
 };
 
-export const genKey = async () => {
+export const genKey = async (): Promise<UserKeys> => {
   const githubKey = await window.crypto.subtle.generateKey(
     {
       name: "AES-GCM",

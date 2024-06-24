@@ -38,15 +38,12 @@ export const authConfig = {
   },
   callbacks: {
     session: ({ session, token }) => {
-      console.log(">>> session callback", session, token);
-
       session.user.handle = token.handle;
       session.user.srcProfilePicture = token.srcProfilePicture;
 
       return session;
     },
     jwt: ({ token, user }) => {
-      console.log(">>> jwt callback", token, user);
       if (user) {
         token.handle = user.handle;
         token.srcProfilePicture = user.srcProfilePicture;
