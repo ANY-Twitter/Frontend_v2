@@ -14,10 +14,14 @@ import { useForm } from "react-hook-form";
 
 import { z } from "zod";
 import { userLoginSchema } from "@/lib/schemas";
-import { signInAction } from "@/lib/auth-utils";
+import { signInAction, signOutAction } from "@/lib/auth-utils";
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useContext, useState } from "react";
+import { UserContext } from "@/app/context";
+import { genKeyPass, hexToBytes, simetricDecrypt } from "@/lib/crypto";
+import LoadKeys from "@/_components/LoadKeys";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -26,12 +30,15 @@ export default function LoginForm() {
     defaultValues: { username: "", password: "" },
   });
 
+  const { setUser } = useContext(UserContext);
+  const [needsToImportKeys, setNeedsToImportKeys] = useState(false);
+
   const onSubmit = async (data: z.infer<typeof userLoginSchema>) => {
     try {
       const result = await signInAction(data);
 
       if (result === "Invalid credentials.") {
-        console.log("Credenciales inválidas");
+        // console.log("Credenciales inválidas");
         toast({
           variant: "destructive",
           title: "Correo o contraseña invalidos",
@@ -40,6 +47,43 @@ export default function LoginForm() {
         form.setError("password", { message: "" });
         return;
       }
+
+      const storedUserDataString = localStorage.getItem(data.username);
+
+      if (!storedUserDataString) {
+        await signOutAction();
+        setNeedsToImportKeys(true);
+        return;
+      }
+
+      const { keys: ct_keys, iv, salt } = JSON.parse(storedUserDataString);
+
+      const localKey = await genKeyPass(data.password, hexToBytes(salt));
+      const dec = new TextDecoder();
+
+      const keys_raw = await simetricDecrypt(
+        hexToBytes(ct_keys),
+        hexToBytes(iv),
+        hexToBytes(localKey)
+      );
+
+      if (keys_raw === null) {
+        await signOutAction();
+        return;
+      }
+
+      const keys = JSON.parse(dec.decode(keys_raw));
+
+      setUser({
+        userInfo: {
+          handle: data.username,
+          name: "Usuario",
+          srcProfilePicture: "",
+        },
+        keys,
+      });
+
+      router.push("/home");
     } catch (error) {
       console.log(error);
     }
@@ -47,6 +91,14 @@ export default function LoginForm() {
 
   return (
     <div className="grid justify-center content-center h-screen ">
+      <LoadKeys
+        showLoadKeys={needsToImportKeys}
+        setShowLoadKeys={setNeedsToImportKeys}
+        user={{
+          handle: form.getValues("username"),
+          password: form.getValues("password"),
+        }}
+      />
       <h1 className="text-4xl font-bold tracking-tight text-center my-4">
         Bienvenido a ANY-TWITTER
       </h1>

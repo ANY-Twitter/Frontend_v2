@@ -13,7 +13,7 @@ import { toast } from "@/components/ui/use-toast";
 import { UserKeys, signUpSchema } from "@/lib/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Loader from "@/_components/Loader";
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -27,9 +27,12 @@ import { apiInstance } from "@/lib/api-calls";
 import { signIn } from "@/auth";
 import { signInAction } from "@/lib/auth-utils";
 import { useRouter } from "next/navigation";
+import { UserContext } from "@/app/context";
 
 export default function SignUp() {
   const router = useRouter();
+
+  const { setUser } = useContext(UserContext);
   const signUpForm = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -145,6 +148,8 @@ export default function SignUp() {
           salt: toHexString(salt),
         })
       );
+
+      setUser({ userInfo: user, keys });
     } catch (e) {
       console.log(e);
       return;
@@ -155,6 +160,8 @@ export default function SignUp() {
         username: data.handle,
         password: data.password,
       });
+
+      router.push("/home");
     } catch (e) {
       console.log(e);
     }

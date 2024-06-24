@@ -5,6 +5,8 @@ import { getSession, useSession } from "next-auth/react";
 import { UserKeys } from "@/lib/schemas";
 import Loader from "@/_components/Loader";
 import { User } from "next-auth";
+import InsertPassDialog from "@/_components/InsertPassDialog";
+import { signOutAction } from "@/lib/auth-utils";
 
 export default function KeysLayout({
   children,
@@ -16,22 +18,24 @@ export default function KeysLayout({
 
   const [askPassword, setAskPassword] = useState(false);
 
-  const [needsToImportKeys, setNeedsToImportKeys] = useState(false);
-
   useEffect(() => {
     if (session.status === "authenticated") {
       let currentUser: User = user?.userInfo ?? session.data.user;
       let keys: UserKeys | null = user?.keys ?? null;
-      console.log("aa", user?.keys);
+
+      setUser({
+        ...(user ?? { keys }),
+        userInfo: currentUser,
+      });
 
       if (keys === null) {
         const userKeys = localStorage.getItem(currentUser.handle);
 
         if (userKeys) {
           //pide la contraseña
-          console.log("pide la contraseña");
+          setAskPassword(true);
         } else {
-          //pide la llave del otro dispositivo
+          signOutAction();
         }
       }
     }
@@ -39,5 +43,13 @@ export default function KeysLayout({
 
   if (session.status === "loading") return <Loader width={48} height={48} />;
 
-  return children;
+  return (
+    <div>
+      <InsertPassDialog
+        showInsertPassDialog={askPassword}
+        setShowInsertPassDialog={setAskPassword}
+      />
+      {children}
+    </div>
+  );
 }

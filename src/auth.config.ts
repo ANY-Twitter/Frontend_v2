@@ -48,7 +48,7 @@ export const authConfig = {
         token.handle = user.handle;
         token.srcProfilePicture = user.srcProfilePicture;
 
-        console.log("new token", token);
+        // console.log("new token", token);
       }
       return token;
     },
@@ -56,7 +56,7 @@ export const authConfig = {
       const isLoggedIn = !!auth?.user;
 
       const pathname = nextUrl.pathname;
-      console.log(pathname, auth);
+      // console.log(pathname, auth);
       if (!isLoggedIn && nextUrl.pathname.startsWith("/signup")) return true;
       else if (
         isLoggedIn &&

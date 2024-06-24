@@ -234,7 +234,11 @@ export const cipher = async (user, pt: string, encrypt_key_raw) => {
 
 //user.handle
 //pt
-export const verifyFirm = async (message: string, signed_hash, sign_key_raw) => {
+export const verifyFirm = async (
+  message: string,
+  signed_hash,
+  sign_key_raw
+) => {
   const keys = JSON.parse(localStorage.getItem("1"));
   // sign_key_raw = keys.sign.public;
 
@@ -267,7 +271,11 @@ export const verifyFirm = async (message: string, signed_hash, sign_key_raw) => 
   return isCorrectlySigned;
 };
 
-export const simetricDecrypt = async (ct, iv, key_raw) => {
+export const simetricDecrypt = async (
+  ct: Uint8Array,
+  iv: Uint8Array,
+  key_raw: Uint8Array
+) => {
   try {
     const key = await window.crypto.subtle.importKey(
       "raw",
