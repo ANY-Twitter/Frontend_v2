@@ -233,7 +233,7 @@ function SendMessage() {
       <Dialog
         open={newUser}
         onOpenChange={async (open) => {
-          setNewUser(false);
+          setNewUser(open);
         }}
       >
         <DialogContent className="sm:max-w-[600px]" hideCloseButton>
