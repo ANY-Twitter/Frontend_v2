@@ -1,5 +1,6 @@
 "use client";
 import React, { useContext, useEffect, useMemo, useState } from "react";
+import defaultImg from "@/public/images/default.jpg";
 import { GlobalUser, UserContext, UserContextType } from "../../context";
 import { getSession, useSession } from "next-auth/react";
 import { UserKeys } from "@/lib/schemas";
@@ -7,6 +8,8 @@ import Loader from "@/_components/Loader";
 import { User } from "next-auth";
 import InsertPassDialog from "@/_components/InsertPassDialog";
 import { signOutAction } from "@/lib/auth-utils";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function KeysLayout({
   children,
@@ -44,11 +47,47 @@ export default function KeysLayout({
   if (session.status === "loading") return <Loader width={48} height={48} />;
 
   return (
-    <div>
+    <div className="grid grid-cols-[300px_1fr] h-screen w-screen text-white">
       <InsertPassDialog
         showInsertPassDialog={askPassword}
         setShowInsertPassDialog={setAskPassword}
       />
+      <div className=" bg-[#22d3ee] grid grid-rows-[50px_100px_1fr_120px]">
+        <div className="grid place-content-center">
+          <Link href="/home" className="block text-xl font-bold">Home</Link>
+        </div>
+        <div className="grid grid-cols-[40%_1fr] items-center justify-items-center">
+          {/* <img src={user.srcProfilePicture === '' ? default_photo : user.srcProfilePicture} alt="" /> */}
+          <Image
+            src={"/default.jpg"}
+            alt="profile picture"
+            width={78}
+            height={78}
+            className="rounded-full"
+          />
+          <div className="user-info">
+            <div className="name">{user?.userInfo.name}</div>
+            <div className="font-bold text-center">@{user?.userInfo.handle}</div>
+          </div>
+        </div>
+
+        <div className="groups"></div>
+        <div className="accesibility">
+          <div className="messages-buttons">
+            <Link className="button" href="messages">
+              Ver Buzón
+            </Link>
+            <Link className="button" href="send-message">
+              Enviar mensaje
+            </Link>
+          </div>
+          <div className="sign-out">
+            <Link className="button" href="config">
+              Configuraciones
+            </Link>
+          </div>
+        </div>
+      </div>
       {children}
     </div>
   );
