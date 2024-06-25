@@ -79,19 +79,19 @@ export default function KeysLayout({
         <div className="groups"></div>
         <div className="grid gap-y-[5px]">
           <div className="grid justify-center items-center gap-x-[12px] grid-cols-[auto_auto]">
-            <Button className="py-[5px] px-[10px]">
+            <Button>
               <Link className="button" href="messages">
                 Ver Buzón
               </Link>
             </Button>
-            <Button className="py-[5px] px-[10px]">
+            <Button>
               <Link className="button" href="send-message">
                 Enviar mensaje
               </Link>
             </Button>
           </div>
           <div className="grid place-content-center">
-            <Button className="py-[5px] px-[10px]">
+            <Button>
               <Link className="button" href="config">
                 Configuraciones
               </Link>

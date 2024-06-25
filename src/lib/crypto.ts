@@ -1,4 +1,6 @@
+import { GlobalUser } from "@/app/context";
 import type { UserKeys } from "./schemas";
+import { User } from "next-auth";
 export const maxSize = () => 4096 / 8 - 2 * (256 / 8) - 2;
 
 export const toHexString = (bytes: Uint8Array) => {
@@ -147,13 +149,13 @@ export const simetricCipher = async (
   return new Uint8Array(ct_raw);
 };
 
-export const cipher = async (user, pt: string, encrypt_key_raw) => {
-  const keys = user.keys;
-
+export const cipher = async (
+  keys: UserKeys,
+  user: User,
+  pt: string,
+  encrypt_key_raw: JsonWebKey
+) => {
   const enc = new TextEncoder();
-  const dec = new TextDecoder();
-
-  // encrypt_key_raw = keys.cipher.public;
 
   const encrypt_key = await crypto.subtle.importKey(
     "jwk",
@@ -177,18 +179,6 @@ export const cipher = async (user, pt: string, encrypt_key_raw) => {
     },
     false,
     ["sign"]
-  );
-
-  const private_key_raw = keys.cipher.private;
-  const private_key = await crypto.subtle.importKey(
-    "jwk",
-    private_key_raw,
-    {
-      name: "RSA-OAEP",
-      hash: "SHA-256",
-    },
-    false,
-    ["decrypt"]
   );
 
   const final_ct = new Uint8Array(512 * 2);
@@ -236,12 +226,9 @@ export const cipher = async (user, pt: string, encrypt_key_raw) => {
 //pt
 export const verifyFirm = async (
   message: string,
-  signed_hash,
-  sign_key_raw
+  signed_hash: Uint8Array,
+  sign_key_raw: JsonWebKey
 ) => {
-  const keys = JSON.parse(localStorage.getItem("1"));
-  // sign_key_raw = keys.sign.public;
-
   const sign_key = await crypto.subtle.importKey(
     "jwk",
     sign_key_raw,
@@ -303,9 +290,9 @@ export const simetricDecrypt = async (
   }
 };
 
-export const decrypt = async (user, ct) => {
-  const keys = user.keys;
-
+// keys: UserKeys,
+// user: User,
+export const decrypt = async (keys: UserKeys, ct: Uint8Array) => {
   const private_key_raw = keys.cipher.private;
   const private_key = await crypto.subtle.importKey(
     "jwk",
@@ -317,8 +304,6 @@ export const decrypt = async (user, ct) => {
     false,
     ["decrypt"]
   );
-
-  // sign_key_raw = keys.sign.public;
 
   const dec = new TextDecoder();
   let pt_raw;

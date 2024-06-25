@@ -205,7 +205,7 @@ export default function SignUp() {
   if (isLoading) return <Loader width={48} height={48} />;
 
   return (
-    <div className="grid justify-center content-center h-screen ">
+    <div className="grid justify-center content-center">
       <h1 className="text-4xl font-bold tracking-tight text-center my-4">
         ANY-TWITTER
       </h1>

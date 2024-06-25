@@ -41,3 +41,28 @@ export const signUpSchema = z
       });
     }
   });
+
+export type KeysList = {
+  handle: string;
+  name: string;
+  keys: string;
+}[];
+
+export interface Tweet {
+  id: string;
+  name: string;
+  handle: string;
+  data: string;
+  srcImg: string;
+}
+
+export interface PublicKeys {
+  cipher: JsonWebKey;
+  sign: JsonWebKey;
+}
+
+export interface CipherMessage {
+  id: string;
+  message: string;
+  signedHash: string;
+}
