@@ -24,7 +24,6 @@ import {
   toHexString,
 } from "@/lib/crypto";
 import { apiInstance } from "@/lib/api-calls";
-import { signIn } from "@/auth";
 import { signInAction } from "@/lib/auth-utils";
 import { useRouter } from "next/navigation";
 import { UserContext } from "@/app/context";
@@ -329,8 +328,7 @@ export default function SignUp() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Llave privada (nombre el archivo <strong>private.json</strong>
-                  )
+                  Llave privada (nombre el archivo <strong>private.json</strong>)
                 </FormLabel>
 
                 <div className="flex">

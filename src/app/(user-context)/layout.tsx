@@ -1,9 +1,6 @@
 "use client";
-import React, { useContext, useEffect, useMemo, useState } from "react";
-import { GlobalUser, UserContext, UserContextType } from "../context";
-import { getSession, useSession } from "next-auth/react";
-import { UserKeys } from "@/lib/schemas";
-import Loader from "@/_components/Loader";
+import React, { useMemo, useState } from "react";
+import { GlobalUser, UserContext } from "../context";
 
 export default function KeysLayout({
   children,

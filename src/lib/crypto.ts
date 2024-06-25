@@ -1,4 +1,3 @@
-import { GlobalUser } from "@/app/context";
 import type { UserKeys } from "./schemas";
 import { User } from "next-auth";
 export const maxSize = () => 4096 / 8 - 2 * (256 / 8) - 2;
@@ -13,7 +12,6 @@ export const hexToBytes = (hex: string) => {
   let bytes = [];
 
   for (let c = 0; c < hex.length; c += 2) {
-    // bytes.push(parseInt(hex.substr(c, 2), 16));
     bytes.push(parseInt(hex.slice(c, c + 2), 16));
   }
 

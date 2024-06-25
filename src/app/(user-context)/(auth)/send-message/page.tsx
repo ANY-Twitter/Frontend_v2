@@ -1,13 +1,6 @@
 "use client";
-import { useContext, useEffect, useState } from "react";
-import {
-  maxSize,
-  genKey,
-  cipher,
-  decrypt,
-  verifyFirm,
-  toHexString,
-} from "@/lib/crypto";
+import { useContext, useState } from "react";
+import { maxSize, cipher, toHexString } from "@/lib/crypto";
 import { UserContext } from "@/app/context";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -62,7 +55,7 @@ function SendMessage() {
       keys.cipher
     );
 
-    let resp_message = await fetch("http://localhost:8000/submitMessage", {
+    await fetch("http://localhost:8000/submitMessage", {
       headers: {
         "Content-Type": "application/json",
       },
@@ -89,8 +82,6 @@ function SendMessage() {
         variant: "destructive",
         title: "Error al obtener lista de usuarios",
       });
-
-      return;
     } else if (resp.status === 200) {
       const githubUrl = `https://raw.githubusercontent.com/${handle}/anytwitter/main/public.json`;
       // const githubUrl = `https://api.github.com/repos/${handle}/anytwitter/contents/public.json`;
@@ -98,10 +89,6 @@ function SendMessage() {
       const userTo = findUser(allUsers, handle);
 
       if (!userTo) {
-        //   toast({
-        //     variant: "destructive",
-        //     title: "Usuario no encontrado",
-        //   });
         sendMessageForm.setError("handleTo", {
           message: "Usuario no encontrado",
         });
@@ -111,9 +98,7 @@ function SendMessage() {
       const respKeys = JSON.parse(userTo.keys) as PublicKeys;
 
       const verifier = await fetch(githubUrl, {
-        headers: {
-          // Authorization: "token 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"
-        },
+        headers: {},
         cache: "no-store",
       });
       // const verifierKeys = JSON.parse(
@@ -210,23 +195,6 @@ function SendMessage() {
               </FormItem>
             )}
           />
-          {/* <input
-            className={`${errorUser !== "" ? "invalid" : ""}`}
-            //   onChange={updateHandleTo}
-            type="text"
-            name="to_user"
-            id="to_user"
-            value={handleTo}
-          />
-          <textarea
-            maxLength={maxSize()}
-            name="user_message"
-            //   onChange={updateMessage}
-            value={message}
-            id="user_message"
-            cols="30"
-            rows="10"
-          ></textarea> */}
           <Button>Enviar</Button>
         </form>
       </Form>
@@ -268,67 +236,6 @@ function SendMessage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      {/* <div className={`confirm-section ${newUser ? "" : "off"}`}>
-        <div className={"confirm-section-info"}>
-          <div className="info">
-            ¿Está seguro de enviar el mensaje a <strong>{handleTo}</strong>?
-            Tenga cuidado con enviar información sensible a una persona
-            equivocada.
-          </div>
-          <div className="button-section">
-            <div
-              className="button"
-              //   onClick={() => {
-              //     setKeysRaw((prevKeys) => {
-              //       return { ...prevKeys, send: 1 };
-              //     });
-              //     let currentLocalKeys = {};
-
-              //     if (localStorage.getItem("savedKeys")) {
-              //       currentLocalKeys = JSON.parse(
-              //         localStorage.getItem("savedKeys")
-              //       );
-              //     }
-
-              //     currentLocalKeys[handleTo] = keysRaw;
-
-              //     localStorage.setItem(
-              //       "savedKeys",
-              //       JSON.stringify(currentLocalKeys)
-              //     );
-
-              //     toggleNewUser();
-              //   }}
-            >
-              Accept
-            </div>
-            <div
-              className="button"
-              //   onClick={() => {
-              //     setKeysRaw({});
-              //     toggleNewUser();
-              //   }}
-            >
-              Cancel
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className={`message-sent-section ${messageSent ? "" : "off"}`}>
-        <div className={"message-sent-info"}>
-          <div className="info">Mensaje enviado correctamente a {handleTo}</div>
-          <div className="button-section">
-            <div
-              className="button"
-              //   onClick={() => {
-              //     toggleMessageSent();
-              //   }}
-            >
-              Ok
-            </div>
-          </div>
-        </div> */}
-      {/* </div> */}
     </div>
   );
 }

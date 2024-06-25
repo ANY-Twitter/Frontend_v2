@@ -7,11 +7,9 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogClose,
 } from "@/components/ui/dialog";
 import Loader from "@/_components/Loader";
 import { Input } from "@/components/ui/input";

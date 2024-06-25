@@ -1,8 +1,7 @@
 "use client";
-import React, { useContext, useEffect, useMemo, useState } from "react";
-import defaultImg from "@/public/images/default.jpg";
-import { GlobalUser, UserContext, UserContextType } from "../../context";
-import { getSession, useSession } from "next-auth/react";
+import React, { useContext, useEffect, useState } from "react";
+import { UserContext } from "../../context";
+import { useSession } from "next-auth/react";
 import { UserKeys } from "@/lib/schemas";
 import Loader from "@/_components/Loader";
 import { User } from "next-auth";
@@ -43,6 +42,7 @@ export default function KeysLayout({
         }
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session.status]);
 
   if (session.status === "loading") return <Loader width={48} height={48} />;

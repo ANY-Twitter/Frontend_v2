@@ -26,7 +26,6 @@ export default function Home() {
           console.log("El usuario es: ", name);
           console.log("El handle es: ", handle);
           console.log("La picture name es: ", pictureName);
-          //const endPointImage ='';
 
           return { id, name, handle, data, srcImg: "" };
         }

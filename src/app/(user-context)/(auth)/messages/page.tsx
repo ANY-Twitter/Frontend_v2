@@ -5,7 +5,6 @@ import { UserContext } from "@/app/context";
 import { CipherMessage, KeysList, PublicKeys, Tweet } from "@/lib/schemas";
 import { findUser } from "@/lib/utils";
 import { decrypt, hexToBytes, verifyFirm } from "@/lib/crypto";
-import { toast } from "@/components/ui/use-toast";
 
 export default function Messages() {
   const { user } = useContext(UserContext);
@@ -14,9 +13,6 @@ export default function Messages() {
   useEffect(() => {
     const getTwets = async () => {
       if (!user?.keys) {
-        // toast({
-        //   description: "No hay llaves, no se puede decifrar los mensajes",
-        // });
         return;
       }
 
@@ -66,9 +62,7 @@ export default function Messages() {
             const respKeys = JSON.parse(userFrom.keys);
 
             const verifier = await fetch(githubUrl, {
-              headers: {
-                // Authorization: "token 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"
-              },
+              headers: {},
               cache: "no-store",
             });
             // const verifierKeys = JSON.parse(window.atob((await verifier.json()).content));
