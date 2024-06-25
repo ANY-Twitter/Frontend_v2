@@ -10,6 +10,7 @@ import InsertPassDialog from "@/_components/InsertPassDialog";
 import { signOutAction } from "@/lib/auth-utils";
 import Link from "next/link";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
 
 export default function KeysLayout({
   children,
@@ -54,7 +55,9 @@ export default function KeysLayout({
       />
       <div className=" bg-[#22d3ee] grid grid-rows-[50px_100px_1fr_120px]">
         <div className="grid place-content-center">
-          <Link href="/home" className="block text-xl font-bold">Home</Link>
+          <Link href="/home" className="block text-xl font-bold">
+            Home
+          </Link>
         </div>
         <div className="grid grid-cols-[40%_1fr] items-center justify-items-center">
           {/* <img src={user.srcProfilePicture === '' ? default_photo : user.srcProfilePicture} alt="" /> */}
@@ -65,26 +68,34 @@ export default function KeysLayout({
             height={78}
             className="rounded-full"
           />
-          <div className="user-info">
-            <div className="name">{user?.userInfo.name}</div>
-            <div className="font-bold text-center">@{user?.userInfo.handle}</div>
+          <div>
+            <div>{user?.userInfo.name}</div>
+            <div className="font-bold text-center">
+              @{user?.userInfo.handle}
+            </div>
           </div>
         </div>
 
         <div className="groups"></div>
-        <div className="accesibility">
-          <div className="messages-buttons">
-            <Link className="button" href="messages">
-              Ver Buzón
-            </Link>
-            <Link className="button" href="send-message">
-              Enviar mensaje
-            </Link>
+        <div className="grid gap-y-[5px]">
+          <div className="grid justify-center items-center gap-x-[12px] grid-cols-[auto_auto]">
+            <Button className="py-[5px] px-[10px]">
+              <Link className="button" href="messages">
+                Ver Buzón
+              </Link>
+            </Button>
+            <Button className="py-[5px] px-[10px]">
+              <Link className="button" href="send-message">
+                Enviar mensaje
+              </Link>
+            </Button>
           </div>
-          <div className="sign-out">
-            <Link className="button" href="config">
-              Configuraciones
-            </Link>
+          <div className="grid place-content-center">
+            <Button className="py-[5px] px-[10px]">
+              <Link className="button" href="config">
+                Configuraciones
+              </Link>
+            </Button>
           </div>
         </div>
       </div>
