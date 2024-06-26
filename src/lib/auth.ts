@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import { authConfig } from "./auth.config";
 import credentials from "next-auth/providers/credentials";
-import { userLoginSchema } from "./lib/schemas";
+import { userLoginSchema } from "./schemas";
 import axios from "axios";
 
 export const {

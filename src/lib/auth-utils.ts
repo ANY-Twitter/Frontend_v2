@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { userLoginSchema } from "./schemas";
 import { AuthError } from "next-auth";
-import { signIn, signOut } from "@/auth";
+import { signIn, signOut } from "@/lib/auth";
 
 export async function signInAction(loginData: z.infer<typeof userLoginSchema>) {
   try {
