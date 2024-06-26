@@ -1,12 +1,8 @@
-import NextAuth, { CredentialsSignin } from "next-auth";
+import NextAuth from "next-auth";
 import { authConfig } from "./auth.config";
 import credentials from "next-auth/providers/credentials";
 import { userLoginSchema } from "./lib/schemas";
 import axios from "axios";
-
-class CustomError extends CredentialsSignin {
-  code = "ptm";
-}
 
 export const {
   auth,
