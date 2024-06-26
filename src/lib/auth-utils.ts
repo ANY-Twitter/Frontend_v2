@@ -15,6 +15,7 @@ export async function signInAction(loginData: z.infer<typeof userLoginSchema>) {
     if (error instanceof AuthError) {
       const nextError = error.cause?.err as unknown as { code: string };
 
+      // console.log("error", nextError.code);
       switch (nextError.code) {
         case "credentials":
           return "Invalid credentials.";

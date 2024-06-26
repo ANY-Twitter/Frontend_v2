@@ -22,7 +22,8 @@ export const {
         if (parsedCredentials.success) {
           const { username, password } = parsedCredentials.data;
 
-          const apiURL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
+          const apiURL =
+            process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3000";
           const response = await axios.post(
             apiURL + "/login",
             {
@@ -30,9 +31,7 @@ export const {
               password,
             },
             {
-              validateStatus(status) {
-                return status < 500;
-              },
+              validateStatus: () => true,
             }
           );
 
@@ -40,6 +39,7 @@ export const {
             return null;
           }
 
+          console.log("response", response.data);
           return response.data;
         }
         return null;

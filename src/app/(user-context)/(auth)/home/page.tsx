@@ -5,6 +5,7 @@ import React, { useContext, useEffect, useState } from "react";
 import type { Tweet } from "@/lib/schemas";
 import NewTweet from "@/_components/NewTweet";
 import Tweets from "@/_components/Tweets";
+import { apiURL } from "@/lib/api-calls";
 
 export default function Home() {
   const { user } = useContext(UserContext);
@@ -12,7 +13,7 @@ export default function Home() {
 
   const [tweets, setTweets] = useState<Tweet[]>([]);
   const load_tweets = async () => {
-    const tweets_response = await fetch("http://localhost:8000/obtenerTweets");
+    const tweets_response = await fetch(apiURL + "/obtenerTweets");
     const tweets: {
       id: string;
       data: string;
@@ -22,12 +23,12 @@ export default function Home() {
     setTweets(
       tweets.map(
         ({ id, data, usuario: [{ handle, name, pictureName }] }, index) => {
-          console.log("La data es: ", data);
-          console.log("El usuario es: ", name);
-          console.log("El handle es: ", handle);
-          console.log("La picture name es: ", pictureName);
+          // console.log("La data es: ", data);
+          // console.log("El usuario es: ", name);
+          // console.log("El handle es: ", handle);
+          // console.log("La picture name es: ", pictureName);
 
-          return { id, name, handle, data, srcImg: "" };
+          return { id, name, handle, data, srcImg: pictureName };
         }
       )
     );

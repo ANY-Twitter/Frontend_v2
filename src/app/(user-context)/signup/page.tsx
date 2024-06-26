@@ -27,10 +27,13 @@ import { apiInstance } from "@/lib/api-calls";
 import { signInAction } from "@/lib/auth-utils";
 import { useRouter } from "next/navigation";
 import { UserContext } from "@/app/context";
+import Image from "next/image";
 
 export default function SignUp() {
   const router = useRouter();
 
+  const [image, setImage] = React.useState<File | null>(null);
+  const [prevSrc, setPrevSrc] = React.useState<string | null>(null);
   const { setUser } = useContext(UserContext);
   const signUpForm = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
@@ -123,6 +126,8 @@ export default function SignUp() {
       })
     );
 
+    if (image !== null) submitForm.append("user_photo", image);
+
     try {
       const response = await apiInstance.post("/crearUsuario", submitForm);
 
@@ -160,7 +165,7 @@ export default function SignUp() {
         password: data.password,
       });
 
-      router.push("/home");
+      // router.push("/home");
     } catch (e) {
       console.log(e);
     }
@@ -328,7 +333,8 @@ export default function SignUp() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Llave privada (nombre el archivo <strong>private.json</strong>)
+                  Llave privada (nombre el archivo <strong>private.json</strong>
+                  )
                 </FormLabel>
 
                 <div className="flex">
@@ -356,6 +362,37 @@ export default function SignUp() {
               </FormItem>
             )}
           />
+          <div className="grid gap-y-[12px] justify-items-center">
+            <Button type="button">
+              <label className="button" htmlFor="userPhoto">
+                Seleccionar imagen
+              </label>
+            </Button>
+            <input
+              type="file"
+              id="userPhoto"
+              name="userPhoto"
+              accept="image/*"
+              className="hidden"
+              onChange={(e) => {
+                if (e.currentTarget.files === null) return;
+                let file = e.currentTarget.files[0];
+                const newSrc = URL.createObjectURL(file);
+                console.log(e.currentTarget.files);
+                setImage(file);
+
+                setPrevSrc(newSrc);
+              }}
+            />
+
+            <Image
+              id="prevImg"
+              src={prevSrc ?? ""}
+              alt="No preview"
+              width={48}
+              height={48}
+            />
+          </div>
           <Button type="submit">Registrar</Button>
         </form>
       </Form>

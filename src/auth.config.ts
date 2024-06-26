@@ -41,6 +41,8 @@ export const authConfig = {
       session.user.handle = token.handle;
       session.user.srcProfilePicture = token.srcProfilePicture;
 
+      console.log("new session", session)
+
       return session;
     },
     jwt: ({ token, user }) => {
@@ -48,7 +50,7 @@ export const authConfig = {
         token.handle = user.handle;
         token.srcProfilePicture = user.srcProfilePicture;
 
-        // console.log("new token", token);
+        console.log("new token", token);
       }
       return token;
     },

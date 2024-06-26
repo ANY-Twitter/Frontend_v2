@@ -46,7 +46,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <Comp
         className={cn(
           buttonVariants({ variant, size, className }),
-          "py-[5px] px-[10px] bg-[#334155]"
+          "py-[5px] px-[10px]"
         )}
         ref={ref}
         {...props}

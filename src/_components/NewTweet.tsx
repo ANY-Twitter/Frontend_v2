@@ -8,6 +8,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormField } from "@/components/ui/form";
+import { apiURL } from "@/lib/api-calls";
 
 const newTweetSchema = z.object({
   data: z.string(),
@@ -26,7 +27,7 @@ export default function NewTweet({
   });
 
   const submit = async ({ data }: { data: string }) => {
-    const response = await fetch("http://127.0.0.1:8000/tweet", {
+    const response = await fetch(apiURL + "/tweet", {
       method: "POST",
       body: JSON.stringify({
         data,
@@ -48,11 +49,16 @@ export default function NewTweet({
       <CardContent className="grid grid-cols-[fit-content(80px)_1fr] gap-x-[20px] pt-[12px]">
         <div className="user-photo">
           <Image
-            src="/default.jpg"
+            src={
+              user?.userInfo.srcProfilePicture &&
+              user?.userInfo.srcProfilePicture !== ""
+                ? user?.userInfo.srcProfilePicture
+                : "/default.jpg"
+            }
             alt="imagen perfil"
             width={48}
             height={48}
-            className="rounded-full"
+            className="rounded-full w-[48px] h-[48px]"
           />
         </div>
         <Form {...form}>

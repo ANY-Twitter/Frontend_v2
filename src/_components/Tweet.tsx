@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
+import Image from "next/image";
 
 interface TweetProps {
   name: string;
@@ -18,7 +19,13 @@ export default function Tweet({
   return (
     <Card className=" w-full pt-[12px]">
       <CardContent className="grid grid-cols-[fit-content(80px)_1fr] gap-x-[20px]">
-        <div></div>
+        <Image
+          src={srcImg !== "" ? srcImg : "/default.jpg"}
+          alt="imagen perfil"
+          width={48}
+          height={48}
+          className="rounded-full w-[48px] h-[48px]"
+        />
         <div className="grid">
           <div className="grid gap-x-[2px] grid-cols-[repeat(2,fit-content(100px))] whitespace-nowrap">
             <div className="name">{name}</div>

@@ -22,6 +22,7 @@ import { KeysList, PublicKeys } from "@/lib/schemas";
 import { toast } from "@/components/ui/use-toast";
 import { DialogDescription } from "@radix-ui/react-dialog";
 import { findUser } from "@/lib/utils";
+import { apiURL } from "@/lib/api-calls";
 
 const sendMessageSchema = z.object({
   message: z
@@ -55,7 +56,7 @@ function SendMessage() {
       keys.cipher
     );
 
-    await fetch("http://localhost:8000/submitMessage", {
+    await fetch(apiURL + "/submitMessage", {
       headers: {
         "Content-Type": "application/json",
       },
@@ -73,7 +74,7 @@ function SendMessage() {
   const loadKeys = async (handle: string) => {
     if (!user) return;
 
-    const resp = await fetch("http://127.0.0.1:8000/getKeysList", {
+    const resp = await fetch(apiURL + "/getKeysList", {
       method: "GET",
     });
 

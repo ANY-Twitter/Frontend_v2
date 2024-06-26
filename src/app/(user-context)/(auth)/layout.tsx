@@ -24,11 +24,12 @@ export default function KeysLayout({
   useEffect(() => {
     if (session.status === "authenticated") {
       let currentUser: User = user?.userInfo ?? session.data.user;
+      let srcProfilePicture: string = session.data.user.srcProfilePicture ?? "";
       let keys: UserKeys | null = user?.keys ?? null;
 
       setUser({
         ...(user ?? { keys }),
-        userInfo: currentUser,
+        userInfo: { ...currentUser, srcProfilePicture },
       });
 
       if (keys === null) {
@@ -42,7 +43,7 @@ export default function KeysLayout({
         }
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session.status]);
 
   if (session.status === "loading") return <Loader width={48} height={48} />;
@@ -62,11 +63,16 @@ export default function KeysLayout({
         <div className="grid grid-cols-[40%_1fr] items-center justify-items-center">
           {/* <img src={user.srcProfilePicture === '' ? default_photo : user.srcProfilePicture} alt="" /> */}
           <Image
-            src={"/default.jpg"}
+            src={
+              user?.userInfo.srcProfilePicture &&
+              user?.userInfo.srcProfilePicture !== ""
+                ? user?.userInfo.srcProfilePicture
+                : "/default.jpg"
+            }
             alt="profile picture"
-            width={78}
-            height={78}
-            className="rounded-full"
+            width={48}
+            height={48}
+            className="rounded-full w-[48px] h-[48px]"
           />
           <div>
             <div>{user?.userInfo.name}</div>

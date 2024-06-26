@@ -84,7 +84,6 @@ export default function InsertPassDialog({
             Se necesita la contraseña para poder enviar mensajes.
           </DialogDescription>
         </DialogHeader>
-        {/* <div>¿Estas segura de eliminar a de la blacklist?</div> */}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(getKeys)} noValidate>
             <FormField

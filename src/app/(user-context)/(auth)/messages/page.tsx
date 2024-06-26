@@ -5,6 +5,7 @@ import { UserContext } from "@/app/context";
 import { CipherMessage, KeysList, PublicKeys, Tweet } from "@/lib/schemas";
 import { findUser } from "@/lib/utils";
 import { decrypt, hexToBytes, verifyFirm } from "@/lib/crypto";
+import { apiURL } from "@/lib/api-calls";
 
 export default function Messages() {
   const { user } = useContext(UserContext);
@@ -18,10 +19,8 @@ export default function Messages() {
 
       const keys = user.keys;
       const finalTweets: Tweet[] = [];
-      const messages_resp = await fetch(
-        "http://localhost:8000/obtenerMensajes"
-      );
-      const keysResp = await fetch("http://127.0.0.1:8000/getKeysList", {
+      const messages_resp = await fetch(apiURL + "/obtenerMensajes");
+      const keysResp = await fetch(apiURL + "/getKeysList", {
         method: "GET",
       });
       const allUsers = (await keysResp.json()) as KeysList;
