@@ -165,7 +165,7 @@ export default function SignUp() {
         password: data.password,
       });
 
-      // router.push("/home");
+      router.push("/home");
     } catch (e) {
       console.log(e);
     }
